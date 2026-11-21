@@ -1,5 +1,6 @@
 // Kunci penyimpanan LocalStorage
 const STORAGE_KEY = "dompetsiswa_transactions_v1";
+const OPENING_BALANCE_KEY = "dompetsiswa_opening_balance_v1";
 
 // Elemen navigasi tampilan & panel
 const views = document.querySelectorAll(".view");
@@ -12,6 +13,10 @@ const welcomeSaldo = document.getElementById("welcome-saldo");
 const saldoUtama = document.getElementById("saldo-utama");
 const totalPemasukan = document.getElementById("total-pemasukan");
 const totalPengeluaran = document.getElementById("total-pengeluaran");
+
+// Elemen saldo awal
+const inputSaldoAwal = document.getElementById("input-saldo-awal");
+const btnSimpanSaldoAwal = document.getElementById("btn-simpan-saldo-awal");
 
 // Elemen form, riwayat, & backup
 const formTransaksi = document.getElementById("form-transaksi");
@@ -31,6 +36,7 @@ const featureTitles = {
 };
 
 let transactions = [];
+let openingBalance = 0;
 
 // Format angka ke Rupiah (contoh: Rp 15.000)
 function formatRupiah(amount) {
@@ -51,16 +57,16 @@ function formatDate(isoString) {
   });
 }
 
-// Simpan data ke LocalStorage
+// Simpan daftar transaksi ke LocalStorage
 function saveTransactions() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
   } catch (err) {
-    console.error("Gagal menyimpan ke LocalStorage:", err);
+    console.error("Gagal menyimpan transaksi ke LocalStorage:", err);
   }
 }
 
-// Muat data dari LocalStorage dengan validasi aman
+// Muat daftar transaksi dari LocalStorage dengan validasi aman
 function loadTransactions() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -78,13 +84,52 @@ function loadTransactions() {
         Number(item.amount) > 0
     );
   } catch (err) {
-    console.error("Gagal membaca LocalStorage:", err);
+    console.error("Gagal membaca transaksi dari LocalStorage:", err);
     return [];
   }
 }
 
-// Hitung pemasukan, pengeluaran, dan sisa saldo
-function calculateSummary(items) {
+// Muat nominal saldo awal dari LocalStorage
+function loadOpeningBalance() {
+  try {
+    const raw = localStorage.getItem(OPENING_BALANCE_KEY);
+    if (raw === null || raw === "") return 0;
+    const parsed = Number(raw);
+    return Number.isFinite(parsed) && parsed >= 0 ? Math.round(parsed) : 0;
+  } catch (err) {
+    console.error("Gagal membaca saldo awal dari LocalStorage:", err);
+    return 0;
+  }
+}
+
+// Simpan nominal saldo awal ke LocalStorage
+function saveOpeningBalance() {
+  const rawText = (inputSaldoAwal?.value ?? "").trim();
+  const parsed = rawText === "" ? 0 : Number(rawText);
+
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    alert("Nominal awal harus berupa angka 0 atau lebih.");
+    inputSaldoAwal?.focus();
+    return;
+  }
+
+  openingBalance = Math.round(parsed);
+  try {
+    localStorage.setItem(OPENING_BALANCE_KEY, String(openingBalance));
+  } catch (err) {
+    console.error("Gagal menyimpan saldo awal ke LocalStorage:", err);
+  }
+
+  if (inputSaldoAwal) {
+    inputSaldoAwal.value = openingBalance > 0 ? String(openingBalance) : "";
+  }
+
+  renderAll();
+  alert("Nominal awal berhasil disimpan.");
+}
+
+// Hitung pemasukan, pengeluaran, dan sisa saldo (termasuk saldo awal)
+function calculateSummary(items, baseBalance = 0) {
   let income = 0;
   let expense = 0;
 
@@ -97,16 +142,18 @@ function calculateSummary(items) {
     }
   }
 
+  const startBalance = Number(baseBalance) || 0;
   return {
+    openingBalance: startBalance,
     income,
     expense,
-    balance: income - expense
+    balance: startBalance + income - expense
   };
 }
 
 // Render ulang ringkasan saldo di halaman pembuka & panel transaksi
 function renderSummary() {
-  const { income, expense, balance } = calculateSummary(transactions);
+  const { income, expense, balance } = calculateSummary(transactions, openingBalance);
 
   const formattedBalance = formatRupiah(balance);
   if (welcomeSaldo) welcomeSaldo.textContent = formattedBalance;
@@ -232,13 +279,23 @@ function deleteTransaction(id) {
 
 // Export transaksi ke CSV (kompatibel dengan Excel)
 function exportToCsv() {
-  if (transactions.length === 0) {
-    alert("Belum ada data transaksi untuk di-export.");
+  if (transactions.length === 0 && openingBalance === 0) {
+    alert("Belum ada data untuk di-export.");
     return;
   }
 
   const headers = ["Tanggal", "Jenis", "Kategori", "Keterangan", "Nominal (Rp)"];
-  const rows = transactions.map((trx) => {
+  const rows = [];
+
+  if (openingBalance > 0) {
+    rows.push(
+      ["-", "Saldo Awal", "Saldo Awal", "Saldo awal tersimpan", openingBalance]
+        .map((val) => "${String(val).replaceAll('"', '""')}")
+        .join(",")
+    );
+  }
+
+  for (const trx of transactions) {
     const jenisLabel = trx.type === "income" ? "Pemasukan" : "Pengeluaran";
     const signedAmount = trx.type === "income" ? trx.amount : -trx.amount;
     const fields = [
@@ -248,10 +305,10 @@ function exportToCsv() {
       trx.title,
       signedAmount
     ];
-    return fields
-      .map((val) => "${String(val).replaceAll('"', '""')}")
-      .join(",");
-  });
+    rows.push(
+      fields.map((val) => "${String(val).replaceAll('"', '""')}").join(",")
+    );
+  }
 
   const csvContent = "\uFEFF" + [headers.join(","), ...rows].join("\n");
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -267,20 +324,27 @@ function exportToCsv() {
   URL.revokeObjectURL(url);
 }
 
-// Hapus seluruh data transaksi
+// Hapus seluruh data transaksi & reset saldo awal
 function resetAllData() {
-  if (transactions.length === 0) {
+  if (transactions.length === 0 && openingBalance === 0) {
     alert("Data sudah kosong.");
     return;
   }
 
   const confirmed = confirm(
-    "Yakin ingin menghapus semua riwayat transaksi? Tindakan ini tidak bisa dibatalkan."
+    "Yakin ingin menghapus semua riwayat transaksi dan mereset saldo awal? Tindakan ini tidak bisa dibatalkan."
   );
   if (!confirmed) return;
 
   transactions = [];
+  openingBalance = 0;
   saveTransactions();
+  try {
+    localStorage.setItem(OPENING_BALANCE_KEY, "0");
+  } catch (err) {
+    console.error("Gagal mereset saldo awal:", err);
+  }
+  if (inputSaldoAwal) inputSaldoAwal.value = "";
   renderAll();
 }
 
@@ -332,11 +396,16 @@ document.querySelectorAll(".btn-back").forEach((btn) => {
   });
 });
 
-// Pasang event listener form & tombol data
+// Pasang event listener saldo awal, form, & tombol data
+btnSimpanSaldoAwal?.addEventListener("click", saveOpeningBalance);
 formTransaksi?.addEventListener("submit", addTransaction);
 btnExportCsv?.addEventListener("click", exportToCsv);
 btnResetData?.addEventListener("click", resetAllData);
 
 // Inisialisasi aplikasi saat dimuat
+openingBalance = loadOpeningBalance();
+if (inputSaldoAwal) {
+  inputSaldoAwal.value = openingBalance > 0 ? String(openingBalance) : "";
+}
 transactions = loadTransactions();
 renderAll();
