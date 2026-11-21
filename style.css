@@ -1,0 +1,364 @@
+:root {
+  --bg-page: #f8f2f4;
+  --bg-card: #ffffff;
+  --bg-soft: #f5e9ed;
+  --text-main: #2a141c;
+  --text-muted: #6e4f5a;
+  --accent: #6b1d36;
+  --accent-hover: #521327;
+  --accent-soft: #fce7ef;
+  --border: #e8d3da;
+  --income-bg: #eaf7ee;
+  --income-text: #1c6b36;
+  --expense-bg: #fdebec;
+  --expense-text: #9e232b;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --shadow: 0 8px 24px rgba(74, 18, 36, 0.07);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Navigasi Tampilan Bertingkat */
+.view {
+  display: none;
+  min-height: 100dvh;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+  animation: fadeIn 0.2s ease;
+}
+
+.view.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Halaman Pembuka */
+.hero-card {
+  margin-top: 8vh;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px 22px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.badge {
+  display: inline-block;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+
+.hero-card h1 {
+  margin: 0 0 8px;
+  font-size: 1.85rem;
+  color: var(--accent);
+}
+
+.hero-desc {
+  margin: 0 auto 20px;
+  max-width: 42ch;
+  color: var(--text-muted);
+  font-size: 0.96rem;
+}
+
+.hero-summary {
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.summary-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.summary-value {
+  font-size: 1.35rem;
+  color: var(--text-main);
+}
+
+/* Top Bar & Tombol */
+.top-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.top-bar h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+button:active {
+  transform: scale(0.99);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 12px 18px;
+  border-radius: var(--radius-sm);
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+}
+
+.btn-back {
+  background: var(--bg-soft);
+  color: var(--accent);
+  border: 1px solid var(--border);
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+}
+
+.btn-secondary {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+}
+
+.btn-danger {
+  background: var(--expense-bg);
+  color: var(--expense-text);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* Grid Menu Fitur */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.feature-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px 16px;
+  box-shadow: 0 4px 14px rgba(74, 18, 36, 0.04);
+}
+
+.feature-card:hover {
+  border-color: var(--accent);
+  background: #fffafb;
+}
+
+.feature-card .icon {
+  font-size: 1.5rem;
+}
+
+.feature-card strong {
+  font-size: 1rem;
+  color: var(--text-main);
+}
+
+.feature-card small {
+  color: var(--text-muted);
+  font-size: 0.83rem;
+  line-height: 1.35;
+}
+
+/* Panel Fitur & Kartu */
+.feature-panel {
+  display: none;
+}
+
+.feature-panel.active {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.card-box,
+.balance-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  box-shadow: 0 4px 14px rgba(74, 18, 36, 0.04);
+}
+
+.balance-card {
+  text-align: center;
+}
+
+.balance-card h3 {
+  margin: 4px 0 0;
+  font-size: 1.75rem;
+  color: var(--accent);
+}
+
+.io-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.io-card {
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  border: 1px solid transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.io-card strong {
+  font-size: 1.1rem;
+}
+
+.io-card.income {
+  background: var(--income-bg);
+  border-color: #c7e7d0;
+  color: var(--income-text);
+}
+
+.io-card.expense {
+  background: var(--expense-bg);
+  border-color: #f6c9cd;
+  color: var(--expense-text);
+}
+
+.card-box h4 {
+  margin: 0 0 12px;
+  font-size: 1.02rem;
+}
+
+.muted {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.86rem;
+}
+
+/* Form Input */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.form-group label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: 2px solid rgba(107, 29, 54, 0.25);
+  border-color: var(--accent);
+}
+
+/* Riwayat Transaksi */
+.history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  padding: 12px 0;
+}
+
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+@media (max-width: 480px) {
+  .feature-grid,
+  .io-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-card {
+    margin-top: 4vh;
+    padding: 22px 18px;
+  }
+}
