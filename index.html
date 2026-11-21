@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#6b1d36" />
+  <meta name="description" content="Kelola uang saku, atur jajan harian, dan capai target finansialmu." />
+  <title>DompetSiswa</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+
+  <!-- 1. HALAMAN PEMBUKA -->
+  <section id="view-welcome" class="view active">
+    <div class="hero-card">
+      <span class="badge">Aplikasi Keuangan Pelajar</span>
+      <h1>DompetSiswa 💰</h1>
+      <p class="hero-desc">Kelola uang saku, atur jajan harian, dan capai target finansialmu pelan-pelan.</p>
+
+      <div class="hero-summary">
+        <span class="summary-label">Sisa Saldo Saat Ini</span>
+        <strong id="welcome-saldo" class="summary-value">Rp 0</strong>
+      </div>
+
+      <button id="btn-to-hub" class="btn-primary" type="button">Masuk ke Menu Fitur →</button>
+    </div>
+  </section>
+
+  <!-- 2. HALAMAN PEMILIHAN FITUR -->
+  <section id="view-hub" class="view">
+    <header class="top-bar">
+      <button class="btn-back" type="button" data-target="view-welcome">← Pembuka</button>
+      <h2>Pilih Fitur</h2>
+    </header>
+
+    <div class="feature-grid">
+      <button class="feature-card" type="button" data-open="feature-transaksi">
+        <span class="icon" aria-hidden="true">🧾</span>
+        <strong>Catat Transaksi</strong>
+        <small>Input pemasukan, pengeluaran &amp; cek sisa saldo</small>
+      </button>
+
+      <button class="feature-card" type="button" data-open="feature-tabungan">
+        <span class="icon" aria-hidden="true">🎯</span>
+        <strong>Target Tabungan</strong>
+        <small>Pantau progres tabungan &amp; barang impian</small>
+      </button>
+
+      <button class="feature-card" type="button" data-open="feature-evaluasi">
+        <span class="icon" aria-hidden="true">📊</span>
+        <strong>Limit &amp; Grafik</strong>
+        <small>Cek batas jajan harian &amp; porsi pengeluaran</small>
+      </button>
+
+      <button class="feature-card" type="button" data-open="feature-data">
+        <span class="icon" aria-hidden="true">💾</span>
+        <strong>Backup &amp; Export</strong>
+        <small>Simpan cadangan data atau unduh CSV</small>
+      </button>
+    </div>
+  </section>
+
+  <!-- 3. RUANG FITUR TERPILIH -->
+  <section id="view-feature" class="view">
+    <header class="top-bar">
+      <button class="btn-back" type="button" data-target="view-hub">← Semua Fitur</button>
+      <h2 id="active-feature-title">Nama Fitur</h2>
+    </header>
+
+    <!-- Panel 1: Catat Transaksi -->
+    <div id="feature-transaksi" class="feature-panel">
+      <div class="balance-card">
+        <p class="muted">Sisa Saldo / Budget</p>
+        <h3 id="saldo-utama">Rp 0</h3>
+      </div>
+
+      <div class="io-grid">
+        <div class="io-card income">
+          <span class="muted">Pemasukan</span>
+          <strong id="total-pemasukan">Rp 0</strong>
+        </div>
+        <div class="io-card expense">
+          <span class="muted">Pengeluaran</span>
+          <strong id="total-pengeluaran">Rp 0</strong>
+        </div>
+      </div>
+
+      <form id="form-transaksi" class="card-box">
+        <h4>Tambah Transaksi Baru</h4>
+
+        <div class="form-group">
+          <label for="trx-jenis">Jenis</label>
+          <select id="trx-jenis">
+            <option value="expense">Pengeluaran</option>
+            <option value="income">Pemasukan</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="trx-kategori">Kategori</label>
+          <select id="trx-kategori">
+            <option value="Makan & Jajan">Makan &amp; Jajan</option>
+            <option value="Transportasi">Transportasi</option>
+            <option value="Kuota & Pulsa">Kuota &amp; Pulsa</option>
+            <option value="Alat Tulis / Tugas">Alat Tulis / Tugas</option>
+            <option value="Uang Saku">Uang Saku</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="trx-keterangan">Keterangan</label>
+          <input id="trx-keterangan" type="text" placeholder="Contoh: Bakso atau Uang saku mingguan" required />
+        </div>
+
+        <div class="form-group">
+          <label for="trx-nominal">Nominal (Rp)</label>
+          <input id="trx-nominal" type="number" min="1" step="any" placeholder="Contoh: 15000" required />
+        </div>
+
+        <button type="submit" class="btn-primary full-width">Simpan Transaksi</button>
+      </form>
+
+      <div class="card-box">
+        <h4>Riwayat Transaksi</h4>
+        <ul id="daftar-riwayat" class="history-list">
+          <li class="empty-state">Belum ada transaksi tercatat.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Panel 2: Target Tabungan -->
+    <div id="feature-tabungan" class="feature-panel">
+      <div class="card-box">
+        <h4>Progres Target Tabungan</h4>
+        <p class="muted">Atur target tabungan dan pantau perkembangannya.</p>
+        <div id="area-tabungan">
+          <p class="empty-state">Siap dihubungkan dengan logika tabungan di <code>app.js</code>.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 3: Limit & Grafik -->
+    <div id="feature-evaluasi" class="feature-panel">
+      <div class="card-box">
+        <h4>Limit Harian &amp; Ringkasan Kategori</h4>
+        <p class="muted">Pantau batas pengeluaran harian dan distribusi kategori.</p>
+        <div id="area-evaluasi">
+          <p class="empty-state">Siap dihubungkan dengan fitur limit &amp; grafik di <code>app.js</code>.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 4: Backup & Export -->
+    <div id="feature-data" class="feature-panel">
+      <div class="card-box">
+        <h4>Cadangkan &amp; Unduh Data</h4>
+        <p class="muted">Amankan data riwayat transaksi dari browser kamu.</p>
+        <div class="action-row">
+          <button id="btn-export-csv" class="btn-secondary" type="button">Export CSV</button>
+          <button id="btn-reset-data" class="btn-danger" type="button">Hapus Semua Data</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="./app.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("./sw.js")
+          .then((reg) => console.log("Service Worker aktif:", reg.scope))
+          .catch((err) => console.error("Gagal daftar Service Worker:", err));
+      });
+    }
+  </script>
+</body>
+</html>
