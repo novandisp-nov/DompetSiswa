@@ -86,6 +86,17 @@
         </div>
       </div>
 
+      <div class="card-box">
+        <h4>Nominal / Saldo Awal</h4>
+        <div class="form-group">
+          <label for="input-saldo-awal">Saldo Awal (Rp)</label>
+          <input id="input-saldo-awal" type="number" min="0" step="1" placeholder="Contoh: 100000" />
+        </div>
+        <button id="btn-simpan-saldo-awal" class="btn-secondary full-width" type="button">
+          Simpan Saldo Awal
+        </button>
+      </div>
+
       <form id="form-transaksi" class="card-box">
         <h4>Tambah Transaksi Baru</h4>
 
@@ -116,7 +127,7 @@
 
         <div class="form-group">
           <label for="trx-nominal">Nominal (Rp)</label>
-          <input id="trx-nominal" type="number" min="1" step="any" placeholder="Contoh: 15000" required />
+          <input id="trx-nominal" type="number" min="1" step="1" placeholder="Contoh: 15000" required />
         </div>
 
         <button type="submit" class="btn-primary full-width">Simpan Transaksi</button>
